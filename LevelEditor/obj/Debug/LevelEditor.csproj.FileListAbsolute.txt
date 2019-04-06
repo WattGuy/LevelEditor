@@ -1,0 +1,10 @@
+C:\Users\WattGuy\source\repos\LevelEditor\LevelEditor\bin\Debug\LevelEditor.exe
+C:\Users\WattGuy\source\repos\LevelEditor\LevelEditor\bin\Debug\LevelEditor.pdb
+C:\Users\WattGuy\source\repos\LevelEditor\LevelEditor\obj\Debug\LevelEditor.csprojResolveAssemblyReference.cache
+C:\Users\WattGuy\source\repos\LevelEditor\LevelEditor\obj\Debug\LevelEditor.Properties.Resources.resources
+C:\Users\WattGuy\source\repos\LevelEditor\LevelEditor\obj\Debug\LevelEditor.csproj.GenerateResource.Cache
+C:\Users\WattGuy\source\repos\LevelEditor\LevelEditor\obj\Debug\LevelEditor.csproj.CoreCompileInputs.cache
+C:\Users\WattGuy\source\repos\LevelEditor\LevelEditor\obj\Debug\LevelEditor.exe
+C:\Users\WattGuy\source\repos\LevelEditor\LevelEditor\obj\Debug\LevelEditor.pdb
+C:\Users\WattGuy\source\repos\LevelEditor\LevelEditor\obj\Debug\LevelEditor.Dot.resources
+C:\Users\WattGuy\source\repos\LevelEditor\LevelEditor\obj\Debug\LevelEditor.Resources.Form1.resources
