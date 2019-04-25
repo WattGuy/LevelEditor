@@ -19,8 +19,10 @@ namespace NextStep
         public static Form1 instance;
         public static Dot selected = null;
         public static List<string> dlcItems = null;
+        public static List<string> onItems = null;
         public static Dictionary<string, HeroType> hts = null;
         public static Dictionary<KeyValuePair<HeroType, DLCType>, Bitmap> imgs = null;
+        public static Dictionary<Dot, On> ons = new Dictionary<Dot, On>();
 
         public Form1()
         {
@@ -87,6 +89,14 @@ namespace NextStep
 
             }
 
+            onItems = new List<string>();
+            for (int i = 0; i < onBox.Items.Count; i++)
+            {
+
+                onItems.Add((string)onBox.Items[i]);
+
+            }
+
             hts = new Dictionary<string, HeroType>();
             for (int i = 0; i < typeBox.Items.Count; i++)
             {
@@ -120,7 +130,9 @@ namespace NextStep
             targetsData.Columns.Add(column2);
 
             typeBox.SelectedIndex = 0;
+            onBox.SelectedIndex = 0;
             updateDLCBox();
+            updateOnBox();
             selected = dots["1:8"];
             //select(dots["1:8"]);
             // DotData[] datas = { new DotData(HeroType.CONCRETE, "5:5") };
@@ -139,8 +151,23 @@ namespace NextStep
 
             d.getBox().BorderStyle = BorderStyle.FixedSingle;
             selected = d;
-            //typeBox.SelectedIndex = (int)d.getHType();
-            //updateDLCBox();
+
+        }
+
+        public static Bitmap getImage(OnType ot)
+        {
+            ResourceManager rm = Resources.ResourceManager;
+
+            try
+            {
+                Bitmap b = (Bitmap)rm.GetObject(getName(ot.ToString()));
+
+                if (b != null) return b;
+
+            }
+            catch (Exception e) { }
+
+            return null;
 
         }
 
@@ -157,7 +184,7 @@ namespace NextStep
 
         }
 
-        private string getName(string s)
+        public static string getName(string s)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(s[0]);
@@ -215,6 +242,42 @@ namespace NextStep
 
         }
 
+        public void updateOnBox()
+        {
+
+            if (notColor(hts[(string)typeBox.Items[typeBox.SelectedIndex]]))
+            {
+
+                onBox.Items.Clear();
+                onBox.Items.Add(onItems[0]);
+                onBox.SelectedIndex = 0;
+
+            }
+            else
+            {
+
+                onBox.Items.Clear();
+
+                foreach (string s in onItems)
+                {
+
+                    onBox.Items.Add(s);
+
+                }
+
+                OnType ot;
+                if (ons.ContainsKey(selected)) {
+
+                    ot = ons[selected].getOType();
+
+                }else ot = OnType.NONE;
+
+                onBox.SelectedIndex = (int) ot;
+
+            }
+
+        }
+
         public static Point getLocation(int x, int y) {
 
             return new Point(12 + (65 * (x - 1)), 465 - (65 * (y - 1)));
@@ -241,6 +304,10 @@ namespace NextStep
             NONE = 0, ADJACENT = 1, HORIZONTAL = 2, VERTICAL = 3, BOMB = 4
         }
 
+        public enum OnType {
+            NONE = 0, ICE = 1
+        }
+
         public static HeroType? getHTypeByInt(int i)
         {
 
@@ -251,6 +318,24 @@ namespace NextStep
                 {
 
                     return ht;
+
+                }
+
+            }
+
+            return null;
+        }
+
+        public static OnType? getOTypeByInt(int i)
+        {
+
+            foreach (OnType ot in Enum.GetValues(typeof(OnType)).Cast<OnType>())
+            {
+
+                if ((int)ot == i)
+                {
+
+                    return ot;
 
                 }
 
@@ -310,6 +395,61 @@ namespace NextStep
             return null;
         }
 
+        public class On {
+
+            private Dot d;
+            private OnType ot;
+            private PictureBox box;
+
+            public On(Dot d, OnType ot) {
+
+                this.d = d;
+                this.ot = ot;
+
+                box = new PictureBox();
+                box.BackgroundImageLayout = ImageLayout.Zoom;
+                updateImage();
+                box.Name = "x" + d.getX() + "y" + d.getY();
+                box.Size = new Size(60, 60);
+                box.MouseMove += new MouseEventHandler(Form1.instance.dot_MouseMove);
+                box.MouseDown += new MouseEventHandler(Form1.instance.dot_MouseDown);
+                box.MouseUp += new MouseEventHandler(Form1.instance.dot_MouseUp);
+                Form1.instance.Controls.Add(box);
+                box.BringToFront();
+                box.Parent = d.getBox();
+                box.BackColor = Color.Transparent;
+
+            }
+
+            private void updateImage()
+            {
+                Bitmap img = getImage(ot);
+
+                if (img != null)
+                {
+
+                    box.BackgroundImage = img;
+
+                }
+                else box.BackgroundImage = Resources.Random;
+
+            }
+
+            public OnType getOType() {
+                return ot;
+            }
+
+            public void setOType(OnType ot)
+            {
+                this.ot = ot;
+            }
+
+            public void destroy() {
+                d.getBox().Controls.Remove(box);
+            }
+
+        }
+
         public class Dot
         {
 
@@ -329,12 +469,13 @@ namespace NextStep
                 box.Size = new Size(60, 60);
                 box.BackgroundImageLayout = ImageLayout.Zoom;
                 box.Name = "x" + x + "y" + y;
-                box.MouseClick += new MouseEventHandler(Form1.instance.select_Click);
                 box.MouseMove += new MouseEventHandler(Form1.instance.dot_MouseMove);
                 box.MouseDown += new MouseEventHandler(Form1.instance.dot_MouseDown);
                 box.MouseUp += new MouseEventHandler(Form1.instance.dot_MouseUp);
                 updateImage();
                 Form1.instance.Controls.Add(box);
+                box.BackColor = Color.Transparent;
+                box.SendToBack();
 
             }
 
@@ -387,51 +528,9 @@ namespace NextStep
 
         }
 
-        private void select_Click(object sender, MouseEventArgs e)
-        {
-            if (selectButton.Enabled) return; 
-
-            string[] s = ((PictureBox) sender).Name.Split('y');
-            s[0] = s[0].Replace("x", "");
-            Dot d = dots[s[0] + ":" + s[1]];
-            select(d);
-            typeBox.SelectedIndex = (int) d.getHType();
-            updateDLCBox();
-        }
-
         private void typeBox_SelectedIndexChanged(object sender, EventArgs e) {
-            HeroType? ht = getHTypeByInt(typeBox.SelectedIndex);
             updateDLCBox();
-
-            if (ht != null && brushButton.Enabled) {
-
-                try
-                {
-
-                    selected.setHType((HeroType) ht);
-
-                }catch (Exception ex){}
-
-            }
-            
-        }
-
-        private void dlcBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DLCType? dt = getDTypeByInt(dlcBox.SelectedIndex);
-
-            if (dt != null && brushButton.Enabled)
-            {
-
-                try
-                {
-
-                    selected.setDType((DLCType) dt);
-
-                }
-                catch (Exception ex) { }
-
-            }
+            updateOnBox();
         }
 
         private void addTypeBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -507,13 +606,15 @@ namespace NextStep
             public string position = "";
             public string type = "";
             public string dtype = "";
+            public string otype = "";
 
-            public DotData(HeroType ht, DLCType dt, string position)
+            public DotData(HeroType ht, DLCType dt, OnType ot, string position)
             {
 
                 this.position = position;
                 type = ht.ToString();
                 dtype = dt.ToString();
+                otype = ot.ToString();
 
             }
 
@@ -583,7 +684,16 @@ namespace NextStep
             foreach (Dot d in Form1.dots.Values) {
                 if (d.getHType() == HeroType.RANDOM) continue;
 
-                dots.Add(new DotData(d.getHType(), d.getDType(), d.getX() + ":" + d.getY()));
+                OnType ot;
+                if (Form1.ons.ContainsKey(d))
+                {
+
+                    ot = Form1.ons[d].getOType();
+
+                }
+                else ot = OnType.NONE;
+
+                dots.Add(new DotData(d.getHType(), d.getDType(), ot, d.getX() + ":" + d.getY()));
 
             }
 
@@ -662,7 +772,8 @@ namespace NextStep
 
         private void dot_MouseDown(object sender, MouseEventArgs e)
         {
-            if (brushButton.Enabled == false) { selecting = true; dot_MouseMove(sender, e); }
+            selecting = true; 
+            dot_MouseMove(sender, e);
         }
 
         private void dot_MouseUp(object sender, MouseEventArgs e)
@@ -685,7 +796,6 @@ namespace NextStep
 
         private void dot_MouseMove(object sender, MouseEventArgs e)
         {
-            if (brushButton.Enabled) return; 
             try
             {
                 Point p = PointToClient(Cursor.Position);
@@ -699,24 +809,33 @@ namespace NextStep
 
                 HeroType ht = hts[(string) typeBox.Items[typeBox.SelectedIndex]];
                 DLCType dt = (DLCType)getDTypeByInt(dlcBox.SelectedIndex);
+                OnType ot = (OnType)getOTypeByInt(onBox.SelectedIndex);
                 if (d.getHType() != ht) d.setHType(ht);
                 if (d.getDType() != dt) d.setDType(dt);
+                if (ons.ContainsKey(d) && ot == OnType.NONE)
+                {
+
+                    ons[d].destroy();
+                    ons.Remove(d);
+
+                }
+                else if (!ons.ContainsKey(d) && ot != OnType.NONE) {
+
+                    ons.Add(d, new On(d, ot));
+
+
+                }
+                else if (ons.ContainsKey(d) && ons[d].getOType() != ot)
+                {
+
+                    ons[d].setOType(ot);
+
+                }
+
 
             }
             catch (Exception ex) { }
 
-        }
-
-        private void selectButton_MouseClick(object sender, MouseEventArgs e)
-        {
-            selectButton.Enabled = false;
-            brushButton.Enabled = true;
-        }
-
-        private void brushButton_MouseClick(object sender, MouseEventArgs e)
-        {
-            selectButton.Enabled = true;
-            brushButton.Enabled = false;
         }
 
         private void openButton_MouseClick(object sender, MouseEventArgs e)
@@ -728,5 +847,6 @@ namespace NextStep
             setLevel(loadLevel(openFileDialog.FileName));
             MessageBox.Show("Уровень успешно открыт!");
         }
+
     }
 }
