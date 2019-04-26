@@ -23,6 +23,7 @@ namespace NextStep
         public static Dictionary<string, HeroType> hts = null;
         public static Dictionary<KeyValuePair<HeroType, DLCType>, Bitmap> imgs = null;
         public static Dictionary<Dot, On> ons = new Dictionary<Dot, On>();
+        public static Dictionary<string, OnType> ots = null;
 
         public Form1()
         {
@@ -112,6 +113,19 @@ namespace NextStep
                 }
 
             }
+
+             ots = new Dictionary<string, OnType>();
+            for (int i = 0; i < onBox.Items.Count; i++)
+            {
+                string s = (string)onBox.Items[i];
+                OnType? ot = getOTypeByInt(i);
+                if (ot == null) continue;
+
+                ots.Add(s, (OnType)ot);
+
+            }
+
+            addTypeBox.Items.Add("ЛЁД");
             addTypeBox.SelectedIndex = 0;
 
             var column1 = new DataGridViewColumn();
@@ -333,6 +347,24 @@ namespace NextStep
             {
 
                 if ((int)ot == i)
+                {
+
+                    return ot;
+
+                }
+
+            }
+
+            return null;
+        }
+
+        public static OnType? getOTypeByString(string s)
+        {
+
+            foreach (OnType ot in Enum.GetValues(typeof(OnType)).Cast<OnType>())
+            {
+
+                if (ot.ToString() == s)
                 {
 
                     return ot;
@@ -580,12 +612,14 @@ namespace NextStep
         {
 
             public string type = "";
+            public string otype = "";
             public int target = 0;
 
-            public TargetData(HeroType ht, int i)
+            public TargetData(string type, string otype, int i)
             {
 
-                type = ht.ToString();
+                this.type = type;
+                this.otype = otype;
                 target = i;
 
             }
@@ -594,6 +628,13 @@ namespace NextStep
             {
 
                 return getHTypeByString(type);
+
+            }
+
+            public OnType? getOType()
+            {
+
+                return getOTypeByString(type);
 
             }
 
@@ -627,29 +668,18 @@ namespace NextStep
             public List<DotData> dots;
             public List<TargetData> targets;
             public int steps;
+            public int energy;
 
-            public LevelData(List<DotData> dots, List<TargetData> targets, int steps)
+            public LevelData(List<DotData> dots, List<TargetData> targets, int steps, int energy)
             {
 
                 this.dots = dots;
                 this.targets = targets;
                 this.steps = steps;
+                this.energy = energy;
 
             }
 
-        }
-
-        public static bool canWrite(string path) {
-
-            try
-            {
-                FileStream stream = new FileStream(path, FileMode.Create);
-
-                return true;
-            }
-            catch (Exception ex) {}
-
-            return false;
         }
 
         public static void saveLevel(LevelData d, string path)
@@ -698,20 +728,41 @@ namespace NextStep
             }
 
             Dictionary<HeroType, TargetData> targets = new Dictionary<HeroType, TargetData>();
+            Dictionary<OnType, TargetData> targets2 = new Dictionary<OnType, TargetData>();
             foreach (DataGridViewRow row in instance.targetsData.Rows)
             {
-                if (!hts.ContainsKey(((string)row.Cells["type"].Value))) continue;
-                HeroType ht = hts[((string) row.Cells["type"].Value)];
+                if (hts.ContainsKey(((string)row.Cells["type"].Value)))
+                {
+                    HeroType ht = hts[((string)row.Cells["type"].Value)];
 
-                targets.Add((HeroType)ht, new TargetData((HeroType)ht, Decimal.ToInt32((decimal) row.Cells["number"].Value)));
+                    targets.Add((HeroType)ht, new TargetData(ht.ToString(), "", Decimal.ToInt32((decimal)row.Cells["number"].Value)));
+                } else if (ots.ContainsKey(((string)row.Cells["type"].Value))) {
+
+                    OnType ot = ots[((string)row.Cells["type"].Value)];
+
+                    targets2.Add((OnType)ot, new TargetData("", ot.ToString(), Decimal.ToInt32((decimal)row.Cells["number"].Value)));
+
+                }
 
             }
 
-            return new LevelData(dots, targets.Values.ToList(), (int) stepsBox.Value);
+            List<TargetData> list = new List<TargetData>();
+            list.AddRange(targets.Values);
+            list.AddRange(targets2.Values);
+
+            return new LevelData(dots, list.ToList(), (int) stepsBox.Value, (int) energyBox.Value);
         }
 
         public void setLevel(LevelData d) {
             List<Dot> dots = Form1.dots.Values.ToList();
+
+            foreach (On o in ons.Values) {
+
+                o.destroy();
+
+            }
+
+            ons.Clear();
 
             if (d.dots != null) {
 
@@ -726,9 +777,19 @@ namespace NextStep
                     dot.setHType((HeroType)ht);
 
                     DLCType? dt = getDTypeByString(data.dtype);
-                    if (dt == null) continue;
+                    if (dt != null) {
 
-                    dot.setDType((DLCType)dt);
+                        dot.setDType((DLCType)dt);
+
+                    }
+
+                    OnType? ot = getOTypeByString(data.otype);
+                    if (ot != null && ot != OnType.NONE) {
+
+                        ons.Add(dot, new On(dot, (OnType) ot));
+
+                    }
+
                     dots.Remove(dot);
 
                 }
@@ -744,12 +805,23 @@ namespace NextStep
 
             targetsData.Rows.Clear();
             foreach (TargetData data in d.targets) {
+                HeroType? ht = getHTypeByString(data.type);
+                if (ht != null)
+                {
+                    targetsData.Rows.Add((string)typeBox.Items[(int) ht], data.target);
+                    continue;
+                }
 
-                targetsData.Rows.Add((string) typeBox.Items[(int) getHTypeByString(data.type)], data.target);
+                OnType? ot = getOTypeByString(data.otype);
+                if (ot != null)
+                {
+                    targetsData.Rows.Add((string)onItems[(int) ot], data.target);
+                }
 
             }
 
             stepsBox.Value = d.steps;
+            energyBox.Value = d.energy;
 
         }
 

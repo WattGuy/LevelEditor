@@ -1,0 +1,12 @@
+C:\Users\WattGuy\source\repos\NextStep\NextStep\bin\Release\NextStep.exe.config
+C:\Users\WattGuy\source\repos\NextStep\NextStep\bin\Release\NextStep.exe
+C:\Users\WattGuy\source\repos\NextStep\NextStep\bin\Release\NextStep.pdb
+C:\Users\WattGuy\source\repos\NextStep\NextStep\bin\Release\Newtonsoft.Json.dll
+C:\Users\WattGuy\source\repos\NextStep\NextStep\bin\Release\Newtonsoft.Json.xml
+C:\Users\WattGuy\source\repos\NextStep\NextStep\obj\Release\NextStep.csprojResolveAssemblyReference.cache
+C:\Users\WattGuy\source\repos\NextStep\NextStep\obj\Release\NextStep.Form1.resources
+C:\Users\WattGuy\source\repos\NextStep\NextStep\obj\Release\NextStep.Properties.Resources.resources
+C:\Users\WattGuy\source\repos\NextStep\NextStep\obj\Release\NextStep.csproj.GenerateResource.Cache
+C:\Users\WattGuy\source\repos\NextStep\NextStep\obj\Release\NextStep.csproj.CoreCompileInputs.cache
+C:\Users\WattGuy\source\repos\NextStep\NextStep\obj\Release\NextStep.exe
+C:\Users\WattGuy\source\repos\NextStep\NextStep\obj\Release\NextStep.pdb

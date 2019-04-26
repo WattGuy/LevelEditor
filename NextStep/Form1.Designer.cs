@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.typeBox = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.dlcBox = new System.Windows.Forms.ComboBox();
@@ -49,9 +50,12 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.onBox = new System.Windows.Forms.ComboBox();
+            this.energyBox = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.targetsData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.addNumberBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.stepsBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.energyBox)).BeginInit();
             this.SuspendLayout();
             // 
             // typeBox
@@ -213,7 +217,7 @@
             0,
             0});
             this.stepsBox.Name = "stepsBox";
-            this.stepsBox.Size = new System.Drawing.Size(312, 20);
+            this.stepsBox.Size = new System.Drawing.Size(145, 20);
             this.stepsBox.TabIndex = 16;
             this.stepsBox.Value = new decimal(new int[] {
             1,
@@ -280,11 +284,39 @@
             this.onBox.Size = new System.Drawing.Size(312, 21);
             this.onBox.TabIndex = 23;
             // 
+            // energyBox
+            // 
+            this.energyBox.Location = new System.Drawing.Point(645, 441);
+            this.energyBox.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.energyBox.Name = "energyBox";
+            this.energyBox.Size = new System.Drawing.Size(145, 20);
+            this.energyBox.TabIndex = 26;
+            this.energyBox.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(642, 425);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(49, 13);
+            this.label7.TabIndex = 25;
+            this.label7.Text = "Энергия";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(802, 536);
+            this.Controls.Add(this.energyBox);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.onBox);
             this.Controls.Add(this.label8);
@@ -305,6 +337,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.typeBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -316,6 +349,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.targetsData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.addNumberBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.stepsBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.energyBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -344,6 +378,8 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox onBox;
+        private System.Windows.Forms.NumericUpDown energyBox;
+        private System.Windows.Forms.Label label7;
     }
 }
 
