@@ -113,6 +113,16 @@ namespace NextStep.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Chains {
+            get {
+                object obj = ResourceManager.GetObject("Chains", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Concrete {
             get {
                 object obj = ResourceManager.GetObject("Concrete", resourceCulture);

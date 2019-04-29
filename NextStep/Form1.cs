@@ -126,6 +126,7 @@ namespace NextStep
             }
 
             addTypeBox.Items.Add("ЛЁД");
+            addTypeBox.Items.Add("ЦЕПИ");
             addTypeBox.SelectedIndex = 0;
 
             var column1 = new DataGridViewColumn();
@@ -146,8 +147,8 @@ namespace NextStep
             typeBox.SelectedIndex = 0;
             onBox.SelectedIndex = 0;
             updateDLCBox();
-            updateOnBox();
             selected = dots["1:8"];
+            updateOnBox();
             //select(dots["1:8"]);
             // DotData[] datas = { new DotData(HeroType.CONCRETE, "5:5") };
             //TargetData[] targets = { new TargetData(HeroType.BLUE, 50) };
@@ -259,7 +260,7 @@ namespace NextStep
         public void updateOnBox()
         {
 
-            if (notColor(hts[(string)typeBox.Items[typeBox.SelectedIndex]]))
+            if (hts[(string)typeBox.Items[typeBox.SelectedIndex]] == HeroType.CONCRETE)
             {
 
                 onBox.Items.Clear();
@@ -279,14 +280,7 @@ namespace NextStep
 
                 }
 
-                OnType ot;
-                if (ons.ContainsKey(selected)) {
-
-                    ot = ons[selected].getOType();
-
-                }else ot = OnType.NONE;
-
-                onBox.SelectedIndex = (int) ot;
+                onBox.SelectedIndex = 0;
 
             }
 
@@ -319,7 +313,7 @@ namespace NextStep
         }
 
         public enum OnType {
-            NONE = 0, ICE = 1
+            NONE = 0, ICE = 1, CHAINS = 2
         }
 
         public static HeroType? getHTypeByInt(int i)
@@ -649,11 +643,11 @@ namespace NextStep
             public string dtype = "";
             public string otype = "";
 
-            public DotData(HeroType ht, DLCType dt, OnType ot, string position)
+            public DotData(string ht, DLCType dt, OnType ot, string position)
             {
 
                 this.position = position;
-                type = ht.ToString();
+                type = ht;
                 dtype = dt.ToString();
                 otype = ot.ToString();
 
@@ -712,7 +706,7 @@ namespace NextStep
             List<DotData> dots = new List<DotData>();
 
             foreach (Dot d in Form1.dots.Values) {
-                if (d.getHType() == HeroType.RANDOM) continue;
+                if (d.getHType() == HeroType.RANDOM && ((!Form1.ons.ContainsKey(d)) || (ons[d].getOType() == OnType.NONE))) continue;
 
                 OnType ot;
                 if (Form1.ons.ContainsKey(d))
@@ -723,7 +717,18 @@ namespace NextStep
                 }
                 else ot = OnType.NONE;
 
-                dots.Add(new DotData(d.getHType(), d.getDType(), ot, d.getX() + ":" + d.getY()));
+                if (d.getHType() == HeroType.RANDOM)
+                {
+
+                    dots.Add(new DotData("NONE", d.getDType(), ot, d.getX() + ":" + d.getY()));
+
+                }
+                else {
+
+                    dots.Add(new DotData(d.getHType().ToString(), d.getDType(), ot, d.getX() + ":" + d.getY()));
+
+                }
+                
 
             }
 
@@ -771,6 +776,13 @@ namespace NextStep
                     if (!Form1.dots.ContainsKey(data.position)) continue;
                     Dot dot = Form1.dots[data.position];
 
+                    OnType? ot = getOTypeByString(data.otype);
+                    if (ot != null && ot != OnType.NONE)
+                    {
+                        ons.Add(dot, new On(dot, (OnType)ot));
+                        dots.Remove(dot);
+                    }
+
                     HeroType? ht = getHTypeByString(data.type);
                     if (ht == null) continue;
 
@@ -782,14 +794,6 @@ namespace NextStep
                         dot.setDType((DLCType)dt);
 
                     }
-
-                    OnType? ot = getOTypeByString(data.otype);
-                    if (ot != null && ot != OnType.NONE) {
-
-                        ons.Add(dot, new On(dot, (OnType) ot));
-
-                    }
-
                     dots.Remove(dot);
 
                 }

@@ -278,7 +278,8 @@
             this.onBox.FormattingEnabled = true;
             this.onBox.Items.AddRange(new object[] {
             "ОТСУТСТВУЕТ",
-            "ЛЁД"});
+            "ЛЁД",
+            "ЦЕПИ"});
             this.onBox.Location = new System.Drawing.Point(478, 127);
             this.onBox.Name = "onBox";
             this.onBox.Size = new System.Drawing.Size(312, 21);
