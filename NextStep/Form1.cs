@@ -149,10 +149,6 @@ namespace NextStep
             updateDLCBox();
             selected = dots["1:8"];
             updateOnBox();
-            //select(dots["1:8"]);
-            // DotData[] datas = { new DotData(HeroType.CONCRETE, "5:5") };
-            //TargetData[] targets = { new TargetData(HeroType.BLUE, 50) };
-            //saveLevel(new LevelData(datas, targets, 30), "D:/hi.json");
 
         }
 
@@ -260,7 +256,7 @@ namespace NextStep
         public void updateOnBox()
         {
 
-            if (hts[(string)typeBox.Items[typeBox.SelectedIndex]] == HeroType.CONCRETE)
+            if (hts[(string) typeBox.Items[typeBox.SelectedIndex]] == HeroType.CONCRETE)
             {
 
                 onBox.Items.Clear();
@@ -468,6 +464,7 @@ namespace NextStep
             public void setOType(OnType ot)
             {
                 this.ot = ot;
+                updateImage();
             }
 
             public void destroy() {
@@ -728,7 +725,6 @@ namespace NextStep
                     dots.Add(new DotData(d.getHType().ToString(), d.getDType(), ot, d.getX() + ":" + d.getY()));
 
                 }
-                
 
             }
 
@@ -736,16 +732,21 @@ namespace NextStep
             Dictionary<OnType, TargetData> targets2 = new Dictionary<OnType, TargetData>();
             foreach (DataGridViewRow row in instance.targetsData.Rows)
             {
-                if (hts.ContainsKey(((string)row.Cells["type"].Value)))
+                if (hts.ContainsKey((string) row.Cells["type"].Value))
                 {
-                    HeroType ht = hts[((string)row.Cells["type"].Value)];
+                    Console.WriteLine("1");
+                    HeroType ht = hts[(string) row.Cells["type"].Value];
 
-                    targets.Add((HeroType)ht, new TargetData(ht.ToString(), "", Decimal.ToInt32((decimal)row.Cells["number"].Value)));
-                } else if (ots.ContainsKey(((string)row.Cells["type"].Value))) {
+                    int i = Decimal.ToInt32((decimal)row.Cells["number"].Value);
 
-                    OnType ot = ots[((string)row.Cells["type"].Value)];
+                    targets.Add(ht, new TargetData(ht.ToString(), "", 1));
+                }
+                else if (ots.ContainsKey((string) row.Cells["type"].Value))
+                {
+                    Console.WriteLine("2");
+                    OnType ot = ots[(string) row.Cells["type"].Value];
 
-                    targets2.Add((OnType)ot, new TargetData("", ot.ToString(), Decimal.ToInt32((decimal)row.Cells["number"].Value)));
+                    targets2.Add(ot, new TargetData("", ot.ToString(), Decimal.ToInt32((decimal) row.Cells["number"].Value)));
 
                 }
 
@@ -812,14 +813,14 @@ namespace NextStep
                 HeroType? ht = getHTypeByString(data.type);
                 if (ht != null)
                 {
-                    targetsData.Rows.Add((string)typeBox.Items[(int) ht], data.target);
+                    targetsData.Rows.Add((string)typeBox.Items[(int) ht], (decimal) data.target);
                     continue;
                 }
 
                 OnType? ot = getOTypeByString(data.otype);
                 if (ot != null)
                 {
-                    targetsData.Rows.Add((string)onItems[(int) ot], data.target);
+                    targetsData.Rows.Add((string)onItems[(int) ot], (decimal) data.target);
                 }
 
             }
